@@ -1,0 +1,16 @@
+{
+  "name": "job-dating",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces":[
+    "backend",
+    "forntend"
+  ],
+  "scripts": {
+    "backend": "npm run dev --workspace=backend",
+    "frontend": "npm start --workspace=frontend",
+    "install:all": "npm install",
+    "install:backend": "npm install --workspace=backend",
+    "install:frontend": "npm install --workspace=frontend"
+  }
+}
