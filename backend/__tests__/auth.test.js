@@ -13,7 +13,7 @@ describe("Auth API", () => {
     await sequelize.close();
   });
   const TEST_EMAIL = "exemple007@gmail.com";
-  const TEST_PASSWORD = "123456";
+  const TEST_PASSWORD = "Test123456";
 
   it("Register new user", async () => {
     const res = await request(app).post("/api/auth/register").send({
