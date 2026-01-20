@@ -1,9 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
-import candidateRoutes from './routes/candidateRoutes.js';
-import recruiterRoutes from './routes/recruiterRoutes.js';
-
+import candidateRoutes from "./routes/candidateRoutes.js";
+import recruiterRoutes from "./routes/recruiterRoutes.js";
+import jobRoutes from "./routes/jobRoutes.js"
 // Config env
 dotenv.config();
 
