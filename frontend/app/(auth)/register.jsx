@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from "react-native";
 import React, { useState } from "react";
 import { useRouter, Link } from "expo-router";
 import { useRegisterMutation } from "../../hooks/authHook";
@@ -51,83 +51,92 @@ export default function Register() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.content}>
-                    <Text style={styles.title}>Créer un compte</Text>
-                    <Text style={styles.subtitle}>Rejoignez Job Dating aujourd'hui</Text>
-
-                    <View style={styles.form}>
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.label}>Email</Text>
-                            <TextInput
-                                style={[styles.input, errors.email && styles.inputError]}
-                                placeholder="votre@email.com"
-                                value={email}
-                                onChangeText={setEmail}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
+            <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={styles.content}>
+                        <View style={styles.header}>
+                            <Image
+                                source={require("../../assets/logo.png")}
+                                style={styles.logo}
+                                resizeMode="contain"
                             />
-                            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                         </View>
+                        <Text style={styles.title}>Créer un compte</Text>
+                        <Text style={styles.subtitle}>Rejoignez Job Dating aujourd'hui</Text>
 
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.label}>Mot de passe</Text>
-                            <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
+                        <View style={styles.form}>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Email</Text>
                                 <TextInput
-                                    style={styles.passwordInput}
-                                    placeholder="Min 6 caractères, 1 chiffre"
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    secureTextEntry={!showPassword}
+                                    style={[styles.input, errors.email && styles.inputError]}
+                                    placeholder="votre@email.com"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
                                 />
-                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                                    <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#666" />
-                                </TouchableOpacity>
+                                {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                             </View>
-                            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-                        </View>
 
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.label}>Vous êtes ?</Text>
-                            <View style={styles.roleContainer}>
-                                <TouchableOpacity
-                                    style={[styles.roleButton, role === 'candidate' && styles.roleButtonActive]}
-                                    onPress={() => setRole('candidate')}
-                                >
-                                    <Text style={[styles.roleText, role === 'candidate' && styles.roleTextActive]}>Candidat</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.roleButton, role === 'recruiter' && styles.roleButtonActive]}
-                                    onPress={() => setRole('recruiter')}
-                                >
-                                    <Text style={[styles.roleText, role === 'recruiter' && styles.roleTextActive]}>Recruteur</Text>
-                                </TouchableOpacity>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Mot de passe</Text>
+                                <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
+                                    <TextInput
+                                        style={styles.passwordInput}
+                                        placeholder="Min 6 caractères, 1 chiffre"
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry={!showPassword}
+                                    />
+                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                                        <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#666" />
+                                    </TouchableOpacity>
+                                </View>
+                                {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                             </View>
-                            {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
-                        </View>
 
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={handleRegister}
-                            disabled={registerMutation.isPending}
-                        >
-                            {registerMutation.isPending ? (
-                                <ActivityIndicator color="#fff" />
-                            ) : (
-                                <Text style={styles.buttonText}>S'inscrire</Text>
-                            )}
-                        </TouchableOpacity>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Vous êtes ?</Text>
+                                <View style={styles.roleContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.roleButton, role === 'candidate' && styles.roleButtonActive]}
+                                        onPress={() => setRole('candidate')}
+                                    >
+                                        <Text style={[styles.roleText, role === 'candidate' && styles.roleTextActive]}>Candidat</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.roleButton, role === 'recruiter' && styles.roleButtonActive]}
+                                        onPress={() => setRole('recruiter')}
+                                    >
+                                        <Text style={[styles.roleText, role === 'recruiter' && styles.roleTextActive]}>Recruteur</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
+                            </View>
 
-                        <View style={styles.footer}>
-                            <Text style={styles.footerText}>Déjà un compte ? </Text>
-                            <Link href="/login" asChild>
-                                <TouchableOpacity>
-                                    <Text style={styles.link}>Se connecter</Text>
-                                </TouchableOpacity>
-                            </Link>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={handleRegister}
+                                disabled={registerMutation.isPending}
+                            >
+                                {registerMutation.isPending ? (
+                                    <ActivityIndicator color="#fff" />
+                                ) : (
+                                    <Text style={styles.buttonText}>S'inscrire</Text>
+                                )}
+                            </TouchableOpacity>
+
+                            <View style={styles.footer}>
+                                <Text style={styles.footerText}>Déjà un compte ? </Text>
+                                <Link href="/login" asChild>
+                                    <TouchableOpacity>
+                                        <Text style={styles.link}>Se connecter</Text>
+                                    </TouchableOpacity>
+                                </Link>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </ScrollView>
         </SafeAreaView>
     );
@@ -151,11 +160,21 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#333",
         marginBottom: 8,
+        textAlign: 'center',
     },
     subtitle: {
         fontSize: 16,
         color: "#666",
         marginBottom: 32,
+        textAlign: 'center',
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    logo: {
+        width: 200,
+        height: 200,
     },
     form: {
         gap: 20,

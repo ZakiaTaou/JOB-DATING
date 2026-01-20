@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Image, TouchableWithoutFeedback, Keyboard } from "react-native";
 import React, { useState } from "react";
 import { useRouter, Link } from "expo-router";
 import { useLoginMutation } from "../../hooks/authHook";
@@ -8,7 +8,7 @@ import { loginSchema } from "../../constants/validationSchemas";
 
 export default function Login() {
     const router = useRouter();
-    const loginMutation = useLoginMutation(); 
+    const loginMutation = useLoginMutation();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -46,63 +46,72 @@ export default function Login() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.title}>Bon retour !</Text>
-                <Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
-
-                <View style={styles.form}>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput
-                            style={[styles.input, errors.email && styles.inputError]}
-                            placeholder="votre@email.com"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.content}>
+                    <View style={styles.header}>
+                        <Image
+                            source={require("../../assets/logo.png")}
+                            style={styles.logo}
+                            resizeMode="contain"
                         />
-                        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                     </View>
+                    <Text style={styles.title}>Bon retour !</Text>
+                    <Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Mot de passe</Text>
-                        <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
+                    <View style={styles.form}>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Email</Text>
                             <TextInput
-                                style={styles.passwordInput}
-                                placeholder="••••••••"
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry={!showPassword}
+                                style={[styles.input, errors.email && styles.inputError]}
+                                placeholder="votre@email.com"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
                             />
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                                <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#666" />
-                            </TouchableOpacity>
+                            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                         </View>
-                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-                    </View>
 
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleLogin}
-                        disabled={loginMutation.isPending}
-                    >
-                        {loginMutation.isPending ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <Text style={styles.buttonText}>Se connecter</Text>
-                        )}
-                    </TouchableOpacity>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Mot de passe</Text>
+                            <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
+                                <TextInput
+                                    style={styles.passwordInput}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry={!showPassword}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                                    <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#666" />
+                                </TouchableOpacity>
+                            </View>
+                            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                        </View>
 
-                    <View style={styles.footer}>
-                        <Text style={styles.footerText}>Pas encore de compte ? </Text>
-                        <Link href="/register" asChild>
-                            <TouchableOpacity>
-                                <Text style={styles.link}>S'inscrire</Text>
-                            </TouchableOpacity>
-                        </Link>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleLogin}
+                            disabled={loginMutation.isPending}
+                        >
+                            {loginMutation.isPending ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.buttonText}>Se connecter</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <View style={styles.footer}>
+                            <Text style={styles.footerText}>Pas encore de compte ? </Text>
+                            <Link href="/register" asChild>
+                                <TouchableOpacity>
+                                    <Text style={styles.link}>S'inscrire</Text>
+                                </TouchableOpacity>
+                            </Link>
+                        </View>
                     </View>
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </SafeAreaView>
     );
 }
@@ -122,11 +131,21 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#333",
         marginBottom: 8,
+        textAlign: 'center',
     },
     subtitle: {
         fontSize: 16,
         color: "#666",
         marginBottom: 32,
+        textAlign: 'center',
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    logo: {
+        width: 200,
+        height: 200,
     },
     form: {
         gap: 20,
