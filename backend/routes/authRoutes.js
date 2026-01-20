@@ -3,14 +3,14 @@ import {
   registerValidation,
   loginValidation,
   validate,
-} from "../middleware/validationMiddleware.js";
+} from "../middlewares/validationMiddleware.js";
 import {
   register,
   login,
   getProfile,
   logout,
 } from "../controllers/authController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
