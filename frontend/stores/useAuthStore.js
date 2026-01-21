@@ -6,7 +6,7 @@ export const useAuthStore = create((set) => ({
   user: null,
   token: null,
   isAuthenticated: false,
-  isInitialized: false, // New flag to track if we checked for token
+  isInitialized: false, 
 
   setAuth: (user, token) => {
     set({ user, token, isAuthenticated: true });
