@@ -1,14 +1,16 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Image, TouchableWithoutFeedback, Keyboard } from "react-native";
 import React, { useState } from "react";
 import { useRouter, Link } from "expo-router";
-import { useLoginMutation } from "../../hooks/authHook";
+import { useLoginMutation } from "../../hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { loginSchema } from "../../constants/validationSchemas";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 export default function Login() {
     const router = useRouter();
     const loginMutation = useLoginMutation();
+    const { user } = useAuthStore();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -31,10 +33,16 @@ export default function Login() {
         loginMutation.mutate(
             { email, password },
             {
-                onSuccess: () => {
-                    // La redirection peut se faire ici ou dans le hook si le routeur était accessible là-bas
-                    // Mais souvent l'UI gère la navigation
-                    router.replace("/(tabs)");
+                onSuccess: (response) => {
+                    // Redirect based on user role
+                    const userRole = response?.data?.user?.role;
+                    if (userRole === 'recruiter') {
+                        router.replace("/(tabs)/profile-recruiter");
+                    } else if (userRole === 'candidate') {
+                        router.replace("/(tabs)/profile-candidate");
+                    } else {
+                        router.replace("/(tabs)");
+                    }
                 },
                 onError: (error) => {
                     // L'erreur est gérée, React Query nous donne l'erreur
@@ -136,12 +144,12 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: 16,
         color: "#666",
-        marginBottom: 32,
+        marginBottom: 30,
         textAlign: 'center',
     },
     header: {
         alignItems: 'center',
-        marginBottom: 20,
+        marginTop: 3,
     },
     logo: {
         width: 200,

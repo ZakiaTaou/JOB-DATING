@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from "react-native";
 import React, { useState } from "react";
 import { useRouter, Link } from "expo-router";
-import { useRegisterMutation } from "../../hooks/authHook";
+import { useRegisterMutation } from "../../hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { registerSchema } from "../../constants/validationSchemas";
@@ -38,9 +38,15 @@ export default function Register() {
         };
 
         registerMutation.mutate(userData, {
-            onSuccess: () => {
+            onSuccess: (response) => {
+                // Redirect based on user role
+                const userRole = response?.data?.user?.role || role;
+                const destinationRoute = userRole === 'recruiter'
+                    ? "/(tabs)/profile-recruiter"
+                    : "/(tabs)/profile-candidate";
+
                 Alert.alert("Succès", "Compte créé avec succès", [
-                    { text: "OK", onPress: () => router.replace("/(tabs)") }
+                    { text: "OK", onPress: () => router.replace(destinationRoute) }
                 ]);
             },
             onError: (error) => {
