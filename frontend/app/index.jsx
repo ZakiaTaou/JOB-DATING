@@ -2,11 +2,19 @@ import { Redirect } from "expo-router";
 import { useAuthStore } from "../stores/useAuthStore";
 
 export default function Index() {
-  const isAuth = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, user } = useAuthStore();
 
-  if (isAuth) {
-    return <Redirect href="/(tabs)/index" />;
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/login" />;
   }
 
-  return <Redirect href="/(auth)/login" />;
+  if (user?.role === "candidate") {
+    return <Redirect href="/(candidate)" />;
+  }
+
+  if (user?.role === "recruiter") {
+    return <Redirect href="/(recruiter)" />;
+  }
+
+  return null;
 }

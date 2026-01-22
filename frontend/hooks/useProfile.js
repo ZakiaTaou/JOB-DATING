@@ -55,11 +55,13 @@ export const useProfile = (role) => {
       Alert.alert("Succès", "Profil sauvegardé avec succès");
     },
     onError: (error) => {
-      console.error("Erreur sauvegarde profil:", error);
-      Alert.alert(
-        "Erreur",
-        error.response?.data?.message || "Erreur lors de la sauvegarde",
-      );
+      const validationErrors = error?.response?.data?.errors;
+      const message =
+        (validationErrors &&
+          validationErrors.map((e) => e.message).join("\n")) ||
+        error?.response?.data?.message ||
+        "Erreur lors de la sauvegarde";
+      Alert.alert("Erreur", message);
     },
   });
 

@@ -33,17 +33,13 @@ const Recruiter = sequelize.define(
     },
     logo: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     companySize: {
       type: DataTypes.ENUM("1-10", "11-50", "51-200", "201-500", "500+"),
       allowNull: true,
     },
     website: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    logo: {
       type: DataTypes.STRING,
       allowNull: true,
     },

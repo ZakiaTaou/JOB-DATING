@@ -1,152 +1,221 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import React, { useState } from "react";
-import { useRouter, Link } from "expo-router";
-import { useRegisterMutation } from "../../hooks/useAuth";
+import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+
+import { useRegisterMutation } from "../../hooks/useAuth";
 import { registerSchema } from "../../constants/validationSchemas";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 export default function Register() {
-    const router = useRouter();
-    const registerMutation = useRegisterMutation();
+  const registerMutation = useRegisterMutation();
+  const setAuth = useAuthStore((state) => state.setAuth);
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState("candidate");
-    const [showPassword, setShowPassword] = useState(false);
-    const [errors, setErrors] = useState({});
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("candidate");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
-    const handleRegister = async () => {
-        // Validation Zod
-        const result = registerSchema.safeParse({ email, password, role });
-        if (!result.success) {
-            const fieldErrors = {};
-            result.error.issues.forEach((issue) => {
-                fieldErrors[issue.path[0]] = issue.message;
-            });
-            setErrors(fieldErrors);
-            return;
-        }
-        setErrors({});
+  const handleRegister = () => {
+    // ✅ Zod validation
+    const result = registerSchema.safeParse({ email, password, role });
 
-        const userData = {
-            // name, 
-            email,
-            password,
-            role
-        };
+    if (!result.success) {
+      const fieldErrors = {};
+      result.error.issues.forEach((issue) => {
+        fieldErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
 
-        registerMutation.mutate(userData, {
-            onSuccess: (response) => {
-                // Redirect based on user role
-                const userRole = response?.data?.user?.role || role;
-                const destinationRoute = userRole === 'recruiter'
-                    ? "/(tabs)/profile-recruiter"
-                    : "/(tabs)/profile-candidate";
+    setErrors({});
 
-                Alert.alert("Succès", "Compte créé avec succès", [
-                    { text: "OK", onPress: () => router.replace(destinationRoute) }
-                ]);
-            },
-            onError: (error) => {
-                Alert.alert("Erreur d'inscription", typeof error === 'string' ? error : "Une erreur est survenue");
-            }
-        });
-    };
+    registerMutation.mutate(
+      { email, password, role },
+      {
+        onSuccess: async (response) => {
+          /**
+           * Backend response example:
+           * {
+           *   success: true,
+           *   data: {
+           *     user: {...},
+           *     token: "jwt"
+           *   }
+           * }
+           */
+          const { user, token } = response.data;
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <View style={styles.content}>
-                        <View style={styles.header}>
-                            <Image
-                                source={require("../../assets/logo.png")}
-                                style={styles.logo}
-                                resizeMode="contain"
-                            />
-                        </View>
-                        <Text style={styles.title}>Créer un compte</Text>
-                        <Text style={styles.subtitle}>Rejoignez Job Dating aujourd'hui</Text>
-
-                        <View style={styles.form}>
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Email</Text>
-                                <TextInput
-                                    style={[styles.input, errors.email && styles.inputError]}
-                                    placeholder="votre@email.com"
-                                    value={email}
-                                    onChangeText={setEmail}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                />
-                                {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-                            </View>
-
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Mot de passe</Text>
-                                <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
-                                    <TextInput
-                                        style={styles.passwordInput}
-                                        placeholder="Min 6 caractères, 1 chiffre"
-                                        value={password}
-                                        onChangeText={setPassword}
-                                        secureTextEntry={!showPassword}
-                                    />
-                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                                        <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#666" />
-                                    </TouchableOpacity>
-                                </View>
-                                {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-                            </View>
-
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Vous êtes ?</Text>
-                                <View style={styles.roleContainer}>
-                                    <TouchableOpacity
-                                        style={[styles.roleButton, role === 'candidate' && styles.roleButtonActive]}
-                                        onPress={() => setRole('candidate')}
-                                    >
-                                        <Text style={[styles.roleText, role === 'candidate' && styles.roleTextActive]}>Candidat</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.roleButton, role === 'recruiter' && styles.roleButtonActive]}
-                                        onPress={() => setRole('recruiter')}
-                                    >
-                                        <Text style={[styles.roleText, role === 'recruiter' && styles.roleTextActive]}>Recruteur</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
-                            </View>
-
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={handleRegister}
-                                disabled={registerMutation.isPending}
-                            >
-                                {registerMutation.isPending ? (
-                                    <ActivityIndicator color="#fff" />
-                                ) : (
-                                    <Text style={styles.buttonText}>S'inscrire</Text>
-                                )}
-                            </TouchableOpacity>
-
-                            <View style={styles.footer}>
-                                <Text style={styles.footerText}>Déjà un compte ? </Text>
-                                <Link href="/login" asChild>
-                                    <TouchableOpacity>
-                                        <Text style={styles.link}>Se connecter</Text>
-                                    </TouchableOpacity>
-                                </Link>
-                            </View>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </ScrollView>
-        </SafeAreaView>
+          await setAuth(user, token);
+          // ❌ No navigation here
+        },
+        onError: () => {
+          Alert.alert(
+            "Erreur d'inscription",
+            "Impossible de créer le compte"
+          );
+        },
+      }
     );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <Image
+                source={require("../../assets/logo.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </View>
+
+            <Text style={styles.title}>Créer un compte</Text>
+            <Text style={styles.subtitle}>
+              Rejoignez Job Dating aujourd'hui
+            </Text>
+
+            <View style={styles.form}>
+              {/* Email */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  style={[styles.input, errors.email && styles.inputError]}
+                  placeholder="votre@email.com"
+                  placeholderTextColor="#8E8E93"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                {errors.email && (
+                  <Text style={styles.errorText}>{errors.email}</Text>
+                )}
+              </View>
+
+              {/* Password */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Mot de passe</Text>
+                <View
+                  style={[
+                    styles.passwordContainer,
+                    errors.password && styles.inputError,
+                  ]}
+                >
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="Min 6 caractères, 1 chiffre"
+                    placeholderTextColor="#8E8E93"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <Ionicons
+                      name={showPassword ? "eye-off" : "eye"}
+                      size={22}
+                      color="#666"
+                    />
+                  </TouchableOpacity>
+                </View>
+                {errors.password && (
+                  <Text style={styles.errorText}>{errors.password}</Text>
+                )}
+              </View>
+
+              {/* Role */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Vous êtes ?</Text>
+                <View style={styles.roleContainer}>
+                  <TouchableOpacity
+                    style={[
+                      styles.roleButton,
+                      role === "candidate" && styles.roleButtonActive,
+                    ]}
+                    onPress={() => setRole("candidate")}
+                  >
+                    <Text
+                      style={[
+                        styles.roleText,
+                        role === "candidate" && styles.roleTextActive,
+                      ]}
+                    >
+                      Candidat
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.roleButton,
+                      role === "recruiter" && styles.roleButtonActive,
+                    ]}
+                    onPress={() => setRole("recruiter")}
+                  >
+                    <Text
+                      style={[
+                        styles.roleText,
+                        role === "recruiter" && styles.roleTextActive,
+                      ]}
+                    >
+                      Recruteur
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {errors.role && (
+                  <Text style={styles.errorText}>{errors.role}</Text>
+                )}
+              </View>
+
+              {/* Button */}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleRegister}
+                disabled={registerMutation.isPending}
+              >
+                {registerMutation.isPending ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>S'inscrire</Text>
+                )}
+              </TouchableOpacity>
+
+              {/* Footer */}
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Déjà un compte ? </Text>
+                <Link href="/login">
+                  <Text style={styles.link}>Se connecter</Text>
+                </Link>
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
+
 
 const styles = StyleSheet.create({
     container: {

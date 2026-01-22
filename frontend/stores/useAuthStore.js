@@ -6,38 +6,62 @@ export const useAuthStore = create((set) => ({
   user: null,
   token: null,
   isAuthenticated: false,
-  isInitialized: false, 
+  isInitialized: false,
 
-  setAuth: (user, token) => {
-    set({ user, token, isAuthenticated: true });
+  // ✅ Login / Register success
+  setAuth: async (user, token) => {
+    await AsyncStorage.setItem("token", token);
+    set({
+      user,
+      token,
+      isAuthenticated: true,
+      isInitialized: true,
+    });
   },
 
+  // ✅ Logout
   logout: async () => {
     await AsyncStorage.removeItem("token");
-    set({ user: null, token: null, isAuthenticated: false });
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isInitialized: true,
+    });
   },
 
+  // ✅ Called once when app starts
   loadUser: async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      if (token) {
-        const response = await getProfile();
-        // Backend returns { success: true, data: user }
-        if (response && response.data) {
-          set({ user: response.data, token, isAuthenticated: true, isInitialized: true });
-        } else {
-           // Fallback or error if structure is wrong
-           set({ isInitialized: true });
-        }
+
+      if (!token) {
+        set({ isInitialized: true });
+        return;
+      }
+
+      const response = await getProfile();
+
+      if (response?.data) {
+        set({
+          user: response.data,
+          token,
+          isAuthenticated: true,
+          isInitialized: true,
+        });
       } else {
+        await AsyncStorage.removeItem("token");
         set({ isInitialized: true });
       }
     } catch (error) {
-      console.error("Failed to load user", error);
+      console.error("loadUser error:", error);
       await AsyncStorage.removeItem("token");
-      set({ user: null, token: null, isAuthenticated: false, isInitialized: true });
+      set({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isInitialized: true,
+      });
     }
   },
-
 }));
-
