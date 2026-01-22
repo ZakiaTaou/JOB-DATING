@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useMyJobs, useDeleteJob } from "../../../hooks/useRecruiterJobs";
 
 const MOCK_MY_JOBS = [
   {
@@ -50,11 +51,13 @@ const MOCK_MY_JOBS = [
     createdAt: "2024-01-05",
   },
 ];
-
 export default function JobsList() {
-  const router = useRouter();
-  const [jobs, setJobs] = useState(MOCK_MY_JOBS);
 
+  const {data,isLoading}= useMyJobs();
+  const deleteJobMutation = useDeleteJob();
+
+  const jobs = data?.data?.data || [];
+  const router = useRouter();
   const handleDelete = (jobId) => {
     Alert.alert(
       "Supprimer l'offre",
@@ -65,7 +68,7 @@ export default function JobsList() {
           text: "Supprimer",
           style: "destructive",
           onPress: () => {
-            setJobs(jobs.filter((job) => job.id !== jobId));
+            deleteJobMutation.mutate(jobId);
             Alert.alert("Succès", "Offre supprimée");
           },
         },
@@ -86,24 +89,23 @@ export default function JobsList() {
       {/* Info */}
       <View style={jobListStyles.jobInfo}>
         <Text style={jobListStyles.infoText}>
-          💰 {item.salary.min.toLocaleString()} -{" "}
-          {item.salary.max.toLocaleString()} MAD
+          💰  {item.salary.min} - {item.salary.max} {item.salary.currency}
         </Text>
         <Text style={jobListStyles.infoText}>
-          📄 {item.contractType} • {item.workMode}
+          📄 {item.contractType} 
         </Text>
       </View>
 
       {/* Skills */}
       <View style={jobListStyles.skillsRow}>
-        {item.skills.slice(0, 3).map((skill, index) => (
+        {item.requiredSkills.slice(0, 3).map((skill, index) => (
           <View key={index} style={jobListStyles.skillBadge}>
             <Text style={jobListStyles.skillBadgeText}>#{skill}</Text>
           </View>
         ))}
-        {item.skills.length > 3 && (
+        {item.requiredSkills.length > 3 && (
           <Text style={jobListStyles.moreSkills}>
-            +{item.skills.length - 3}
+            +{item.requiredSkills.length - 3}
           </Text>
         )}
       </View>

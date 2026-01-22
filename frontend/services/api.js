@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_url = "http://192.168.68.116:5000/api";
+const API_url = "http://192.168.1.54:5000/api";
 
 export const api = axios.create({
   baseURL: API_url,
@@ -46,3 +46,16 @@ export const getProfile = async () => {
     throw error.response?.data?.message || "Erreur lors de la récupération du profil";
   }
 };
+
+export const getMyJobs = () => {
+  return api.get("/jobs/my-jobs/list");
+};
+
+export const deleteJob = (jobId) => {
+  return api.delete(`/jobs/${jobId}`);
+};
+
+export const createJob = async (data) => {
+  const res =  await api.post("/jobs", data);
+  return res.data;
+}
