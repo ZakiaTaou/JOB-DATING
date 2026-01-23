@@ -9,14 +9,24 @@ export default function JobsLayout() {
       <Stack.Screen 
         name="addJob" 
         options={{ 
-          presentation: "modal" 
+          presentation: "formSheet",
+            animation: "fade_from_bottom",
+            gestureDirection: "vertical",
+            sheetGrabberVisible: true,
+            sheetCornerRadius: 25,
+            sheetAllowedDetents: [0.9, 1.0],
         }} 
       />
       <Stack.Screen 
         name="editJob/[id]" 
         options={{ 
-          presentation: "modal" 
-        }} 
+          presentation: "formSheet",
+            animation: "fade_from_bottom",
+            gestureDirection: "vertical",
+            sheetGrabberVisible: true,
+            sheetCornerRadius: 25,
+            sheetAllowedDetents: [0.9, 1.0],
+        }}
       />
     </Stack>
   );
