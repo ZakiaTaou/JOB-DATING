@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_url = "http://192.168.1.54:5000/api";
+const API_url = "http://192.168.11.107:5000/api";
 
 export const api = axios.create({
   baseURL: API_url,
@@ -57,5 +57,15 @@ export const deleteJob = (jobId) => {
 
 export const createJob = async (data) => {
   const res =  await api.post("/jobs", data);
+  return res.data;
+}
+
+export const getJobById = async (id) => {
+  const res = await api.get(`/jobs/${id}`);
+  return res.data;
+}
+
+export const updateJob = async ({id, data}) => {
+  const res = await api.put(`/jobs/${id}`, data);
   return res.data;
 }
