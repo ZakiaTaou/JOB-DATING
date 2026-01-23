@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_url = "http://192.168.1.122:5000/api";
+const API_url = "http://192.168.1.54:5000/api";
 
 export const api = axios.create({
   baseURL: API_url,
@@ -68,4 +68,31 @@ export const getJobById = async (id) => {
 export const updateJob = async ({id, data}) => {
   const res = await api.put(`/jobs/${id}`, data);
   return res.data;
+}
+
+export const getCandidatesToSwipe = async () => {
+  const res = await api.get("/recruiters/candidates/swipe");
+  return res.data.data;
+};
+
+export const swipeCandidate = async (candidateId, action) => {
+  const res = await api.post(
+    `/recruiters/swipe/candidate/${candidateId}`,
+    { action }
+  );
+  return res.data;
+};
+
+export const getJobsToSwipe = async ()=>{
+  const res = await api.get("/candidates/recruiters/swipe");
+  return res.data.data;
+}
+
+export const swipeJob = async (jobId, action)=>{
+  const res = await api.post(
+    `/candidates/swipe/recruiter/${jobId}`,
+    {action}
+  )
+  return res.data
+
 }

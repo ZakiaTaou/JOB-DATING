@@ -7,67 +7,29 @@ import {
   PanResponder,
   Dimensions,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../stores/useAuthStore";
-
+import { useJobsToSwipe, useSwipeJob } from "../../hooks/useCandidateSwipe";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-const SWIPE_THRESHOLD = 120;
-
-// DONNÉES DE TEST
-const MOCK_JOBS = [
-  {
-    id: 1,
-    title: "Développeur Full Stack JS",
-    company: "Tech Innovators",
-    location: "Casablanca",
-    salaryMin: 15000,
-    salaryMax: 25000,
-    contractType: "CDI",
-    workMode: "Hybrid",
-    skills: ["JavaScript", "React", "Node.js", "MongoDB"],
-    description:
-      "Nous recherchons un développeur Full Stack expérimenté pour rejoindre notre équipe dynamique. Vous travaillerez sur des projets innovants utilisant les dernières technologies web.",
-    requirements: "Bac+3 en informatique, 3 ans d'expérience minimum",
-  },
-  {
-    id: 2,
-    title: "Développeur Frontend React",
-    company: "Digital Solutions",
-    location: "Rabat",
-    salaryMin: 12000,
-    salaryMax: 20000,
-    contractType: "CDI",
-    workMode: "Remote",
-    skills: ["React", "TypeScript", "CSS", "Tailwind"],
-    description:
-      "Rejoignez notre équipe frontend et créez des interfaces utilisateur modernes et réactives.",
-    requirements: "Portfolio requis, 2 ans d'expérience en React",
-  },
-  {
-    id: 3,
-    title: "Backend Developer Node.js",
-    company: "CloudTech",
-    location: "Marrakech",
-    salaryMin: 18000,
-    salaryMax: 30000,
-    contractType: "CDI",
-    workMode: "Présentiel",
-    skills: ["Node.js", "Express", "PostgreSQL", "Docker"],
-    description:
-      "Développez des APIs robustes et scalables pour nos applications cloud.",
-    requirements: "Expérience with microservices et architecture cloud",
-  },
-];
 
 export default function CandidateSwipe() {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useAuthStore();
+  const { data: jobs = [], isLoading } = useJobsToSwipe();
+  const { mutate: swipeJob } = useSwipeJob();
 
 
-  if (currentIndex >= MOCK_JOBS.length) {
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!jobs.length) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -85,7 +47,7 @@ export default function CandidateSwipe() {
     );
   }
 
-  const currentJob = MOCK_JOBS[currentIndex];
+  const currentJob = jobs[0];
 
   return (
     <View style={styles.container}>
@@ -120,8 +82,8 @@ export default function CandidateSwipe() {
               <View style={styles.infoItem}>
                 <Ionicons name="cash-outline" size={16} color="#007AFF" />
                 <Text style={styles.infoText}>
-                  {currentJob.salaryMin.toLocaleString()} -{" "}
-                  {currentJob.salaryMax.toLocaleString()} MAD
+                  {currentJob.salary.min.toLocaleString()} -{" "}
+                  {currentJob.salary.max.toLocaleString()} MAD
                 </Text>
               </View>
               <View style={styles.infoItem}>
@@ -131,14 +93,14 @@ export default function CandidateSwipe() {
                   color="#007AFF"
                 />
                 <Text style={styles.infoText}>
-                  {currentJob.contractType} • {currentJob.workMode}
+                  {currentJob.contractType}
                 </Text>
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>Compétences</Text>
+            <Text style={styles.sectionTitle}>Compétences {currentJob.id}</Text>
             <View style={styles.skillsContainer}>
-              {currentJob.skills.map((skill, index) => (
+              {currentJob.requiredSkills.map((skill, index) => (
                 <View key={index} style={styles.skillTag}>
                   <Text style={styles.skillText}>#{skill}</Text>
                 </View>
@@ -147,28 +109,23 @@ export default function CandidateSwipe() {
 
             <Text style={styles.sectionTitle}>Description</Text>
             <Text style={styles.description}>{currentJob.description}</Text>
-
-            {currentJob.requirements && (
-              <>
-                <Text style={styles.sectionTitle}>Prérequis</Text>
-                <Text style={styles.description}>
-                  {currentJob.requirements}
-                </Text>
-              </>
-            )}
           </ScrollView>
         </View>
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.dislikeButton]}
-        >
+        <TouchableOpacity style={[styles.button, styles.dislikeButton]}
+        onPress={()=>swipeJob({
+          jobId: currentJob.id,
+          action:"dislike",
+        })}>
           <Ionicons name="close" size={32} color="#FF3B30" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.likeButton]}
-        >
+        <TouchableOpacity style={[styles.button, styles.likeButton]}
+        onPress={()=>swipeJob({
+          jobId: currentJob.id,
+          action:"like",
+        })}>
           <Ionicons name="heart" size={32} color="#007AFF" />
         </TouchableOpacity>
       </View>
@@ -206,9 +163,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   cardContainer: {
-     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     padding: 16,
     marginTop: 16,
   },
@@ -300,8 +257,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 30,
     paddingBottom: 5,
   },

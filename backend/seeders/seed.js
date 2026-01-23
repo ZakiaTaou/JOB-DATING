@@ -1,7 +1,7 @@
 // ============================================
 // backend/seeders/seed.js
 // ============================================
-import { User, Candidate, Recruiter, JobOffer, sequelize } from '../models/index.js';
+import { User, Candidate, Recruiter, JobOffer, Swipe,sequelize } from '../models/index.js';
 import bcrypt from 'bcryptjs';
 
 const seed = async () => {
