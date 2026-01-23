@@ -61,8 +61,6 @@ export default function Login() {
           const { user, token } = response.data;
 
           await setAuth(user, token);
-          console.log("Login successful, user set:", user);
-
           // Force navigation if layout doesn't catch it
           if (user?.role === "candidate") {
             router.replace("/(candidate)");

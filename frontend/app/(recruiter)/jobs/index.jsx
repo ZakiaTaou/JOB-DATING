@@ -9,7 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useMyJobs, useDeleteJob } from "../../../hooks/useRecruiterJobs";
-
+import { CircleDollarSign, MapPin,FileText } from "lucide-react-native";
 const MOCK_MY_JOBS = [
   {
     id: 1,
@@ -52,8 +52,7 @@ const MOCK_MY_JOBS = [
   },
 ];
 export default function JobsList() {
-
-  const {data,isLoading}= useMyJobs();
+  const { data, isLoading } = useMyJobs();
   const deleteJobMutation = useDeleteJob();
 
   const jobs = data?.data?.data || [];
@@ -77,24 +76,34 @@ export default function JobsList() {
   };
 
   const renderJob = ({ item }) => (
-    <View style={jobListStyles.jobCard}
-    >
+    <View style={jobListStyles.jobCard}>
       {/* Header */}
       <View style={jobListStyles.jobHeader}>
         <View style={jobListStyles.jobHeaderLeft}>
           <Text style={jobListStyles.jobTitle}>{item.title}</Text>
-          <Text style={jobListStyles.jobLocation}>📍 {item.location}</Text>
+          <View
+            style={{ flexDirection: "row", alignItems: "flex-start", gap: 2 }}
+          >
+            <MapPin size={14} color={"#EF4444"} />
+            <Text style={jobListStyles.jobLocation}> {item.location}</Text>
+          </View>
         </View>
       </View>
 
       {/* Info */}
       <View style={jobListStyles.jobInfo}>
-        <Text style={jobListStyles.infoText}>
-          💰  {item.salary.min} - {item.salary.max} {item.salary.currency}
-        </Text>
-        <Text style={jobListStyles.infoText}>
-          📄 {item.contractType} 
-        </Text>
+        <View
+          style={{ flexDirection: "row", alignItems: "flex-start", gap: 4 }}
+        >
+          <CircleDollarSign color="#ae881e" size={14} />
+          <Text style={jobListStyles.infoText}>
+            {item.salary.min} - {item.salary.max} {item.salary.currency}
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 4 }}>
+          <FileText color="#38352e" size={16}  />
+          <Text style={jobListStyles.infoText}>{item.contractType}</Text>
+        </View>
       </View>
 
       {/* Skills */}
