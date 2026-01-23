@@ -1,5 +1,5 @@
-import { Recruiter, User } from '../models/index.js';
-
+import { Recruiter, User, Candidate, Swipe } from '../models/index.js';
+import { Op } from "sequelize";
 export const createRecruiterProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -192,5 +192,57 @@ export const getMyRecruiterProfile = async (req, res) => {
       message: 'Erreur lors de la récupération du profil',
       error: error.message
     });
+  }
+};
+
+
+export const getCandidatesToSwipe = async (req, res) => {
+  try {
+    const recruiterUserId = req.user.id;
+
+    const swipedCandidates = await Swipe.findAll({
+      where: {
+        userId: recruiterUserId,
+        targetType: "candidate",
+      },
+      attributes: ["targetId"],
+    });
+
+    const excludedIds = swipedCandidates.map(s => s.targetId);
+
+    const candidates = await Candidate.findAll({
+      where: {
+        id: {
+          [Op.notIn]: excludedIds.length ? excludedIds : [0],
+        },
+      },
+    });
+
+    res.json({ success: true, data: candidates });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const swipeCandidate = async (req, res) => {
+  try {
+    const recruiterUserId = req.user.id;
+    const { candidateId } = req.params;
+    const { action } = req.body;
+
+    if (!["like", "dislike"].includes(action)) {
+      return res.status(400).json({ message: "Invalid action" });
+    }
+
+    const swipe = await Swipe.create({
+      userId: recruiterUserId,
+      targetId: candidateId,
+      targetType: "candidate",
+      action,
+    });
+
+    res.status(201).json({ success: true, data: swipe });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

@@ -1,32 +1,49 @@
-import express from 'express';
+import express from "express";
 import {
   createRecruiterProfile,
   updateRecruiterProfile,
   getRecruiterProfile,
-  getMyRecruiterProfile
-} from '../controllers/recruiterController.js';
-import { protect, authorize } from '../middlewares/authMiddleware.js';
-import { recruiterProfileValidation, validate } from '../middlewares/validationMiddleware.js';
+  getMyRecruiterProfile,
+  getCandidatesToSwipe,
+  swipeCandidate,
+} from "../controllers/recruiterController.js";
+import { protect, authorize } from "../middlewares/authMiddleware.js";
+import {
+  recruiterProfileValidation,
+  validate,
+} from "../middlewares/validationMiddleware.js";
 
 const router = express.Router();
 
 router.post(
-  '/profile',
+  "/profile",
   protect,
-  authorize('recruiter'),
+  authorize("recruiter"),
   recruiterProfileValidation,
   validate,
-  createRecruiterProfile
+  createRecruiterProfile,
 );
 
-router.put(
-  '/profile',
+router.put("/profile", protect, authorize("recruiter"), updateRecruiterProfile);
+
+router.get(
+  "/profile/me",
   protect,
-  authorize('recruiter'),
-  updateRecruiterProfile
+  authorize("recruiter"),
+  getMyRecruiterProfile,
 );
+router.get("/profile/:id", protect, getRecruiterProfile);
 
-router.get('/profile/me', protect, authorize('recruiter'), getMyRecruiterProfile);
-router.get('/profile/:id', protect, getRecruiterProfile);
-
+router.get(
+  "/candidates/swipe",
+  protect,
+  authorize("recruiter"),
+  getCandidatesToSwipe,
+);
+router.post(
+  "/swipe/candidate/:candidateId",
+  protect,
+  authorize("recruiter"),
+  swipeCandidate,
+);
 export default router;
