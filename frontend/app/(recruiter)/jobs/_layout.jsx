@@ -7,15 +7,15 @@ export default function JobsLayout() {
         name="index" 
       />
       <Stack.Screen 
-        name="create" 
+        name="addJob" 
         options={{ 
           presentation: "modal" 
         }} 
       />
       <Stack.Screen 
-        name="job/[id]" 
+        name="editJob/[id]" 
         options={{ 
-          title: "Modifier l'Offre",
+          presentation: "modal" 
         }} 
       />
     </Stack>

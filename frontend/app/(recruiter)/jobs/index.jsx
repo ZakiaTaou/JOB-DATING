@@ -77,7 +77,8 @@ export default function JobsList() {
   };
 
   const renderJob = ({ item }) => (
-    <View style={jobListStyles.jobCard}>
+    <View style={jobListStyles.jobCard}
+    >
       {/* Header */}
       <View style={jobListStyles.jobHeader}>
         <View style={jobListStyles.jobHeaderLeft}>
@@ -113,7 +114,7 @@ export default function JobsList() {
       <View style={jobListStyles.actionsRow}>
         <TouchableOpacity
           style={[jobListStyles.actionButton, jobListStyles.editButton]}
-          //   onPress={() => router.push(`/(recruiter)/jobs/edit/${item.id}`)}
+          onPress={() => router.push(`jobs/editJob/${item.id}`)}
         >
           <Text style={jobListStyles.editButtonText}>Modifier</Text>
         </TouchableOpacity>
@@ -136,7 +137,7 @@ export default function JobsList() {
           <Text style={jobListStyles.title}>Mes Offres</Text>
           <TouchableOpacity
             style={jobListStyles.createButton}
-            onPress={() => router.push("jobs/create")}
+            onPress={() => router.push("jobs/addJob")}
           >
             <Text style={jobListStyles.createButtonText}>+ Créer</Text>
           </TouchableOpacity>
@@ -159,7 +160,7 @@ export default function JobsList() {
             </Text>
             <TouchableOpacity
               style={jobListStyles.emptyButton}
-              onPress={() => router.push("jobs/create")}
+              onPress={() => router.push("jobs/addJob")}
             >
               <Text style={jobListStyles.emptyButtonText}>
                 + Créer une offre
