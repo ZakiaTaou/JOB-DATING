@@ -1,13 +1,13 @@
-import { Recruiter, User, Candidate, Swipe } from '../models/index.js';
+import { Recruiter, User, Candidate, Swipe, Match } from "../models/index.js";
 import { Op } from "sequelize";
 export const createRecruiterProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    if (req.user.role !== 'recruiter') {
+    if (req.user.role !== "recruiter") {
       return res.status(403).json({
         success: false,
-        message: 'Seuls les recruteurs peuvent créer un profil recruteur'
+        message: "Seuls les recruteurs peuvent créer un profil recruteur",
       });
     }
 
@@ -15,7 +15,7 @@ export const createRecruiterProfile = async (req, res) => {
     if (existingProfile) {
       return res.status(400).json({
         success: false,
-        message: 'Un profil recruteur existe déjà pour cet utilisateur'
+        message: "Un profil recruteur existe déjà pour cet utilisateur",
       });
     }
 
@@ -27,13 +27,13 @@ export const createRecruiterProfile = async (req, res) => {
       companySize,
       website,
       location,
-      phone
+      phone,
     } = req.body;
 
     if (!companyName || !description) {
       return res.status(400).json({
         success: false,
-        message: 'Le nom de l\'entreprise et la description sont requis'
+        message: "Le nom de l'entreprise et la description sont requis",
       });
     }
 
@@ -46,21 +46,20 @@ export const createRecruiterProfile = async (req, res) => {
       companySize,
       website,
       location,
-      phone
+      phone,
     });
 
     res.status(201).json({
       success: true,
-      message: 'Profil recruteur créé avec succès',
-      data: profile
+      message: "Profil recruteur créé avec succès",
+      data: profile,
     });
-
   } catch (error) {
-    console.error('Erreur création profil recruteur:', error);
+    console.error("Erreur création profil recruteur:", error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la création du profil',
-      error: error.message
+      message: "Erreur lors de la création du profil",
+      error: error.message,
     });
   }
 };
@@ -69,10 +68,10 @@ export const updateRecruiterProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    if (req.user.role !== 'recruiter') {
+    if (req.user.role !== "recruiter") {
       return res.status(403).json({
         success: false,
-        message: 'Accès refusé'
+        message: "Accès refusé",
       });
     }
 
@@ -80,7 +79,7 @@ export const updateRecruiterProfile = async (req, res) => {
     if (!profile) {
       return res.status(404).json({
         success: false,
-        message: 'Profil recruteur non trouvé'
+        message: "Profil recruteur non trouvé",
       });
     }
 
@@ -92,7 +91,7 @@ export const updateRecruiterProfile = async (req, res) => {
       companySize,
       website,
       location,
-      phone
+      phone,
     } = req.body;
 
     await profile.update({
@@ -103,21 +102,20 @@ export const updateRecruiterProfile = async (req, res) => {
       companySize: companySize || profile.companySize,
       website: website || profile.website,
       location: location || profile.location,
-      phone: phone || profile.phone
+      phone: phone || profile.phone,
     });
 
     res.status(200).json({
       success: true,
-      message: 'Profil mis à jour avec succès',
-      data: profile
+      message: "Profil mis à jour avec succès",
+      data: profile,
     });
-
   } catch (error) {
-    console.error('Erreur mise à jour profil recruteur:', error);
+    console.error("Erreur mise à jour profil recruteur:", error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la mise à jour du profil',
-      error: error.message
+      message: "Erreur lors de la mise à jour du profil",
+      error: error.message,
     });
   }
 };
@@ -130,30 +128,29 @@ export const getRecruiterProfile = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'user',
-          attributes: ['id', 'email', 'role', 'createdAt']
-        }
-      ]
+          as: "user",
+          attributes: ["id", "email", "role", "createdAt"],
+        },
+      ],
     });
 
     if (!profile) {
       return res.status(404).json({
         success: false,
-        message: 'Profil recruteur non trouvé'
+        message: "Profil recruteur non trouvé",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: profile
+      data: profile,
     });
-
   } catch (error) {
-    console.error('Erreur récupération profil recruteur:', error);
+    console.error("Erreur récupération profil recruteur:", error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la récupération du profil',
-      error: error.message
+      message: "Erreur lors de la récupération du profil",
+      error: error.message,
     });
   }
 };
@@ -167,34 +164,32 @@ export const getMyRecruiterProfile = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'user',
-          attributes: ['id', 'email', 'role']
-        }
-      ]
+          as: "user",
+          attributes: ["id", "email", "role"],
+        },
+      ],
     });
 
     if (!profile) {
       return res.status(404).json({
         success: false,
-        message: 'Profil recruteur non trouvé'
+        message: "Profil recruteur non trouvé",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: profile
+      data: profile,
     });
-
   } catch (error) {
-    console.error('Erreur récupération profil:', error);
+    console.error("Erreur récupération profil:", error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la récupération du profil',
-      error: error.message
+      message: "Erreur lors de la récupération du profil",
+      error: error.message,
     });
   }
 };
-
 
 export const getCandidatesToSwipe = async (req, res) => {
   try {
@@ -208,7 +203,7 @@ export const getCandidatesToSwipe = async (req, res) => {
       attributes: ["targetId"],
     });
 
-    const excludedIds = swipedCandidates.map(s => s.targetId);
+    const excludedIds = swipedCandidates.map((s) => s.targetId);
 
     const candidates = await Candidate.findAll({
       where: {
@@ -228,9 +223,9 @@ export const swipeCandidate = async (req, res) => {
   try {
     const recruiterUserId = req.user.id;
     const { candidateId } = req.params;
-    const { action } = req.body;
+    const { jobOfferId, action } = req.body;
 
-    if (!["like", "dislike"].includes(action)) {
+    if (action !== "like" && action !== "dislike") {
       return res.status(400).json({ message: "Invalid action" });
     }
 
@@ -241,7 +236,34 @@ export const swipeCandidate = async (req, res) => {
       action,
     });
 
-    res.status(201).json({ success: true, data: swipe });
+    if (action === "like") {
+      const candidateUser = await Candidate.findByPk(candidateId);
+      const candidateSwipe = await Swipe.findOne({
+        where: {
+          userId: candidateUser.userId,
+          targetId: jobOfferId,
+          targetType: "job_offer",
+          action: "like",
+        },
+      });
+
+      if (candidateSwipe) {
+        const match = await Match.findOrCreate({
+          where: {
+            candidateId,
+            jobOfferId,
+          },
+        });
+
+        return res.json({
+          success: true,
+          match: true,
+          data: match[0],
+        });
+      }
+    }
+
+    res.json({ success: true, match: false });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

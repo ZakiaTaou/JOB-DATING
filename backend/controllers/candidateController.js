@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import {
   Candidate,
   JobOffer,
+  Match,
   Recruiter,
   Swipe,
   User,
@@ -241,17 +242,53 @@ export const swipeJob = async (req, res) => {
     const { jobId } = req.params;
     const { action } = req.body;
 
-    if (!["like", "dislike"].includes(action)) {
+    if (action !== "like" && action !== "dislike") {
       return res.status(400).json({ message: "Invalid action" });
     }
 
-    const swipe = await Swipe.create({
+    await Swipe.create({
       userId: candidateUserId,
       targetId: jobId,
       targetType: "job_offer",
       action,
     });
-    res.status(201).json({ success: true, data: swipe });
+
+    if (action === "like") {
+      const candidate = await Candidate.findOne({
+        where: { userId: candidateUserId },
+      });
+
+      const recruiterSwipe = await Swipe.findOne({
+        where: {
+          targetId: candidate.id,
+          targetType: "candidate",
+          action: "like",
+        },
+        include: [
+          {
+            model: JobOffer,
+            where: { id: jobId },
+          },
+        ],
+      });
+
+      if (recruiterSwipe) {
+        const match = await Match.findOrCreate({
+          where: {
+            candidateId: candidate.id,
+            jobOfferId: jobId,
+          },
+        });
+
+        return res.status(201).json({
+          success: true,
+          match: true,
+          data: match[0],
+        });
+      }
+    }
+
+    res.status(201).json({ success: true, match: false });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
