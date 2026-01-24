@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes.js";
 import candidateRoutes from "./routes/candidateRoutes.js";
 import recruiterRoutes from "./routes/recruiterRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js"
+import matchRoutes from "./routes/matchRoutes.js"
 // Config env
 dotenv.config();
 
@@ -16,5 +17,6 @@ app.use("/api/auth", authRoutes);
 app.use('/api/candidates', candidateRoutes); 
 app.use('/api/recruiters', recruiterRoutes);  
 app.use('/api/jobs', jobRoutes);
+app.use('/api/matches', matchRoutes);
 
 export default app;
