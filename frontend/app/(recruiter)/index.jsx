@@ -21,35 +21,35 @@ export default function RecruiterSwipe() {
   const { user } = useAuthStore();
   const { data: candidates = [], isLoading } = useCandidatesToSwipe();
   const { mutate: swipeCandidate } = useSwipeCandidate();
-
+  // const [index, setIndex] = useState(0);
+  // const currentCandidate = candidates[index];
   if (isLoading) {
-  return (
-    <View style={styles.container}>
-      <Text>Loading...</Text>
-    </View>
-  );
-}
-
-if (!candidates.length) {
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Candidats</Text>
-        <Text style={styles.headerSubtitle}>
-          {user?.firstName || "Recruiter"}
-        </Text>
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
       </View>
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyEmoji}>🎉</Text>
-        <Text style={styles.emptyTitle}>Plus de candidats</Text>
-        <Text style={styles.emptySubtitle}>Revenez plus tard</Text>
+    );
+  }
+
+  if (!candidates.length) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Candidats</Text>
+          <Text style={styles.headerSubtitle}>
+            {user?.firstName || "Recruiter"}
+          </Text>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyEmoji}>🎉</Text>
+          <Text style={styles.emptyTitle}>Plus de candidats</Text>
+          <Text style={styles.emptySubtitle}>Revenez plus tard</Text>
+        </View>
       </View>
-    </View>
-  );
-}
+    );
+  }
 
-
-const currentCandidate = candidates[0];
+  const currentCandidate = candidates[0];
 
   return (
     <View style={styles.container}>
@@ -70,13 +70,17 @@ const currentCandidate = candidates[0];
               <Text style={styles.candidateName}>
                 {currentCandidate.firstName} {currentCandidate.lastName}
               </Text>
-              <Text style={styles.candidateTitle}>{currentCandidate.title}</Text>
+              <Text style={styles.candidateTitle}>
+                {currentCandidate.title}
+              </Text>
             </View>
 
             <View style={styles.infoRow}>
               <View style={styles.infoBadge}>
                 <Ionicons name="location-outline" size={16} color="#007AFF" />
-                <Text style={styles.infoBadgeText}>{currentCandidate.location}</Text>
+                <Text style={styles.infoBadgeText}>
+                  {currentCandidate.location}
+                </Text>
               </View>
               <View style={styles.infoBadge}>
                 <Ionicons name="time-outline" size={16} color="#007AFF" />
@@ -112,18 +116,24 @@ const currentCandidate = candidates[0];
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={[styles.button, styles.dislikeButton]}
-        onPress={()=>swipeCandidate({
-          candidateId: currentCandidate.id,
-          action: "dislike",
-        })}>
+        <TouchableOpacity
+          style={[styles.button, styles.dislikeButton]}
+          onPress={() =>
+            swipeCandidate({
+              candidateId: currentCandidate.id,
+              action: "dislike",
+            })}
+        >
           <Ionicons name="close" size={32} color="#FF3B30" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.likeButton]}
-        onPress={()=>swipeCandidate({
-          candidateId: currentCandidate.id,
-          action: "like",
-        })}>
+        <TouchableOpacity
+          style={[styles.button, styles.likeButton]}
+          onPress={() =>
+            swipeCandidate({
+              candidateId: currentCandidate.id,
+              action: "like",
+            })}
+        >
           <Ionicons name="heart" size={32} color="#007AFF" />
         </TouchableOpacity>
       </View>

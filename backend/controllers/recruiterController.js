@@ -229,14 +229,14 @@ export const swipeCandidate = async (req, res) => {
       return res.status(400).json({ message: "Invalid action" });
     }
 
-    const swipe = await Swipe.create({
+    await Swipe.create({
       userId: recruiterUserId,
       targetId: candidateId,
       targetType: "candidate",
       action,
     });
 
-    if (action === "like") {
+    if (action === "like" && !jobOfferId) {
       const candidateUser = await Candidate.findByPk(candidateId);
       const candidateSwipe = await Swipe.findOne({
         where: {
@@ -258,7 +258,7 @@ export const swipeCandidate = async (req, res) => {
         return res.json({
           success: true,
           match: true,
-          data: match[0],
+          data: match,
         });
       }
     }

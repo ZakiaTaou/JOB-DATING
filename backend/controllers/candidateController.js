@@ -254,39 +254,33 @@ export const swipeJob = async (req, res) => {
     });
 
     if (action === "like") {
-      const candidate = await Candidate.findOne({
-        where: { userId: candidateUserId },
-      });
+  const candidate = await Candidate.findOne({
+    where: { userId: candidateUserId },
+  });
 
-      const recruiterSwipe = await Swipe.findOne({
-        where: {
-          targetId: candidate.id,
-          targetType: "candidate",
-          action: "like",
-        },
-        include: [
-          {
-            model: JobOffer,
-            where: { id: jobId },
-          },
-        ],
-      });
+  const recruiterSwipe = await Swipe.findOne({
+    where: {
+      targetId: candidate.id,
+      targetType: "candidate",
+      action: "like",
+    },
+  });
 
-      if (recruiterSwipe) {
-        const match = await Match.findOrCreate({
-          where: {
-            candidateId: candidate.id,
-            jobOfferId: jobId,
-          },
-        });
+  if (recruiterSwipe) {
+    const [match] = await Match.findOrCreate({
+      where: {
+        candidateId: candidate.id,
+        jobOfferId: jobId,
+      },
+    });
 
-        return res.status(201).json({
-          success: true,
-          match: true,
-          data: match[0],
-        });
-      }
-    }
+    return res.status(201).json({
+      success: true,
+      match: true,
+      data: match,
+    });
+  }
+}
 
     res.status(201).json({ success: true, match: false });
   } catch (error) {

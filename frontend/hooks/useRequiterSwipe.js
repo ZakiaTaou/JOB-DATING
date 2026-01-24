@@ -14,8 +14,12 @@ export const useSwipeCandidate = () => {
   return useMutation({
     mutationFn: ({ candidateId, action }) =>
       swipeCandidate(candidateId, action),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["candidates-to-swipe"]);
+
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData(
+        ["candidates-to-swipe"],
+        (old = []) => old.filter(c => c.id !== variables.candidateId)
+      );
     },
   });
 };
