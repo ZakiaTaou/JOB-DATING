@@ -7,7 +7,7 @@ import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/candidate/matches", protect, getCandidateMatches);
-router.get("/recruiter/matches", protect, getRecruiterMatches);
+router.get("/candidate", protect, getCandidateMatches);
+router.get("/recruiter", protect, getRecruiterMatches);
 
 export default router;
