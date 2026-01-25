@@ -13,6 +13,7 @@ import {
   useCandidatesToSwipe,
   useSwipeCandidate,
 } from "../../hooks/useRequiterSwipe";
+import { UserRoundSearch } from "lucide-react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -37,11 +38,11 @@ export default function RecruiterSwipe() {
         <View style={styles.header}>
           <Text style={styles.title}>Candidats</Text>
           <Text style={styles.headerSubtitle}>
-            {user?.firstName || "Recruiter"}
+            {user?.recruiterProfile?.companyName || "Recruiter"}
           </Text>
         </View>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyEmoji}>🎉</Text>
+          <Text style={styles.emptyEmoji}><UserRoundSearch size={50} color={"#007AFF"} /></Text>
           <Text style={styles.emptyTitle}>Plus de candidats</Text>
           <Text style={styles.emptySubtitle}>Revenez plus tard</Text>
         </View>
@@ -56,7 +57,7 @@ export default function RecruiterSwipe() {
       <View style={styles.header}>
         <Text style={styles.title}>Découverte</Text>
         <Text style={styles.headerSubtitle}>
-          {user?.companyName || "Mon Entreprise"}
+          {user?.recruiterProfile?.companyName || "Mon Entreprise"}
         </Text>
       </View>
 
