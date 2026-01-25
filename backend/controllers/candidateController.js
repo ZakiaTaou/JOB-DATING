@@ -258,22 +258,24 @@ export const swipeJob = async (req, res) => {
         where: { userId: candidateUserId },
       });
 
+      const job = await JobOffer.findByPk(jobId);
+      if (!job) {
+        return res.status(404).json({ message: "Job offer not found" });
+      }
+
+      const recruiter = await Recruiter.findByPk(job.recruiterId);
+
       const recruiterSwipe = await Swipe.findOne({
         where: {
+          userId: recruiter.userId,
           targetId: candidate.id,
           targetType: "candidate",
           action: "like",
         },
-        include: [
-          {
-            model: JobOffer,
-            where: { id: jobId },
-          },
-        ],
       });
 
       if (recruiterSwipe) {
-        const match = await Match.findOrCreate({
+        const [match] = await Match.findOrCreate({
           where: {
             candidateId: candidate.id,
             jobOfferId: jobId,
@@ -283,7 +285,7 @@ export const swipeJob = async (req, res) => {
         return res.status(201).json({
           success: true,
           match: true,
-          data: match[0],
+          data: match,
         });
       }
     }

@@ -1,4 +1,4 @@
-import { Recruiter, User, Candidate, Swipe, Match } from "../models/index.js";
+import { Recruiter, User, Candidate, Swipe, Match, JobOffer } from "../models/index.js";
 import { Op } from "sequelize";
 export const createRecruiterProfile = async (req, res) => {
   try {
@@ -221,50 +221,48 @@ export const getCandidatesToSwipe = async (req, res) => {
 
 export const swipeCandidate = async (req, res) => {
   try {
-    const recruiterUserId = req.user.id;
+    const userId = req.user.id; // recruiter user
     const { candidateId } = req.params;
-    const { jobOfferId, action } = req.body;
+    const { action } = req.body;
 
-    if (action !== "like" && action !== "dislike") {
-      return res.status(400).json({ message: "Invalid action" });
-    }
+    if (!["like", "dislike"].includes(action)) return res.status(400).json({ message: "Invalid action" });
 
     const swipe = await Swipe.create({
-      userId: recruiterUserId,
+      userId,
       targetId: candidateId,
       targetType: "candidate",
       action,
     });
 
+    let match = null;
+
     if (action === "like") {
-      const candidateUser = await Candidate.findByPk(candidateId);
+      const candidate = await Candidate.findByPk(candidateId);
+      const recruiter = await Recruiter.findOne({ where: { userId } });
+      const jobOffers = await JobOffer.findAll({ where: { recruiterId: recruiter.id } });
+
       const candidateSwipe = await Swipe.findOne({
         where: {
-          userId: candidateUser.userId,
-          targetId: jobOfferId,
+          userId: candidate.userId,
+          targetId: { [Op.in]: jobOffers.map(j => j.id) },
           targetType: "job_offer",
           action: "like",
         },
       });
 
       if (candidateSwipe) {
-        const match = await Match.findOrCreate({
-          where: {
-            candidateId,
-            jobOfferId,
-          },
-        });
-
-        return res.json({
-          success: true,
-          match: true,
-          data: match[0],
+        match = await Match.create({
+          candidateId: candidate.id,
+          jobOfferId: candidateSwipe.targetId,
+          status: "active",
         });
       }
     }
 
-    res.json({ success: true, match: false });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(201).json({ swipe, match });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
   }
 };
+

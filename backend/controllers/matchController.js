@@ -39,9 +39,12 @@ export const getCandidateMatches = async (req, res) => {
 ========================= */
 export const getRecruiterMatches = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const recruiterUserId = req.user.id;
 
-    const recruiter = await Recruiter.findOne({ where: { userId } });
+    const recruiter = await Recruiter.findOne({
+      where: { userId: recruiterUserId },
+    });
+
     if (!recruiter) {
       return res.status(404).json({ message: "Recruiter not found" });
     }
@@ -50,19 +53,21 @@ export const getRecruiterMatches = async (req, res) => {
       include: [
         {
           model: JobOffer,
-          where: { recruiterId: recruiter.id },
-          include: [
-            {
-              model: Candidate,
-            },
-          ],
+          as: "jobOffer",
+          where: { recruiterId: recruiter.id }, // ⭐ هنا الحل
+        },
+        {
+          model: Candidate,
+          as: "candidate",
         },
       ],
-      order: [["createdAt", "DESC"]],
     });
+
+    console.log("MATCHES 👉", matches);
 
     res.json({ success: true, data: matches });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };

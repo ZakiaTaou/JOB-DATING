@@ -1,102 +1,95 @@
+// import { View, Text, FlatList, TouchableOpacity } from "react-native";
+// import { useRecruiterMatches } from "../../hooks/useMatches";
+
+// export default function CandidateMatchesScreen() {
+//   const { data: matches, isLoading } = useRecruiterMatches();
+
+//   if (isLoading) return <Text>Loading...</Text>;
+//   console.log( matches);
+
+//   return (
+//     <View style={{ flex: 1, padding: 16 }}>
+//       {matches.map((match) => (
+//         <View key={match.id}>
+//           <Text>
+//             {match?.candidate?.firstName} {match?.candidate?.lastName}
+//           </Text>
+//           <Text>{match?.jobOffer?.title}</Text>
+//         </View>
+//       ))}
+//     </View>
+//   );
+// }
+
+import React from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
+import { useRecruiterMatches } from "../../hooks/useMatches";
+import { MapPin, MessageCircleHeart } from "lucide-react-native";
 
-const MOCK_MATCHES = [
-  {
-    id: 1,
-    name: "Tech Innovators",
-    subtitle: "Dev Full Stack JS",
-    avatar: "TI",
-    lastMessage: "Bonjour! Quand êtes-vous disponible?",
-    unread: true,
-    time: "10:30",
-  },
-  {
-    id: 2,
-    name: "Digital Solutions",
-    subtitle: "Dev Frontend React",
-    avatar: "DS",
-    lastMessage: "Merci pour votre candidature",
-    unread: false,
-    time: "Hier",
-  },
-  {
-    id: 3,
-    name: "CloudTech",
-    subtitle: "Backend Node.js",
-    avatar: "CT",
-    lastMessage: "Parfait! À bientôt",
-    unread: false,
-    time: "2j",
-  },
-];
-
-export default function MatchesScreen() {
+export default function RecruiterMatchesScreen() {
   const router = useRouter();
-  const { user, logout } = useAuthStore();
-
+  const { user } = useAuthStore();
+  const { data: matches, isLoading } = useRecruiterMatches();
   const renderMatch = ({ item }) => (
     <TouchableOpacity
-      style={matchStyles.matchItem}
-      onPress={() => {
-        // Navigation vers le chat
-        router.push(`/chat/${item.id}`);
-      }}
+      style={styles.matchItem}
+      onPress={() => router.push(`/chat/${item.id}`)}
     >
-      <View style={matchStyles.avatar}>
-        <Text style={matchStyles.avatarText}>{item.avatar}</Text>
-      </View>
-
-      <View style={matchStyles.matchInfo}>
-        <Text style={matchStyles.matchName}>{item.name}</Text>
-        <Text style={matchStyles.matchSubtitle}>{item.subtitle}</Text>
-        <Text
-          style={[
-            matchStyles.matchMessage,
-            item.unread && matchStyles.unreadMessage,
-          ]}
-        >
-          {item.lastMessage}
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>
+          {item.candidate?.firstName.charAt(0)}
+          {item.candidate?.lastName.charAt(0)}
         </Text>
       </View>
 
-      <View style={matchStyles.matchRight}>
-        <Text style={matchStyles.matchTime}>{item.time}</Text>
-        {item.unread && <View style={matchStyles.unreadBadge} />}
+      <View style={styles.matchInfo}>
+        <Text style={styles.matchName}>
+          {item.candidate?.firstName} {item.candidate?.lastName}
+        </Text>
+        <Text style={styles.matchSubtitle}>{item.jobOffer?.title}</Text>
+        <Text style={styles.matchLocation}>
+          <MapPin size={14} color={"#EF4444"} /> {item.candidate?.location}
+        </Text>
+      </View>
+
+      <View style={styles.matchRight}>
+        <MessageCircleHeart size={22} color="#007AFF" />
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={matchStyles.container}>
-      <View style={matchStyles.header}>
-        <View style={matchStyles.headerRow}>
-          <Text style={matchStyles.title}>Mes Matchs</Text>
-        </View>
-        <Text style={matchStyles.email}>
-          {user?.companyName || "Mon Entreprise"} • {MOCK_MATCHES.length} conversations
+    <View style={styles.container}>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Mes Matchs</Text>
+        <Text style={styles.subtitle}>
+          {user?.companyName || "Mon Entreprise"} matchs
         </Text>
       </View>
 
+      {/* LIST */}
       <FlatList
-        data={MOCK_MATCHES}
-        renderItem={renderMatch}
+        data={matches}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={matchStyles.listContent}
+        renderItem={renderMatch}
+        contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <View style={matchStyles.emptyContainer}>
-            <Text style={matchStyles.emptyEmoji}>💔</Text>
-            <Text style={matchStyles.emptyText}>Pas encore de matchs</Text>
-            <Text style={matchStyles.emptySubtext}>Swipez pour matcher!</Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyEmoji}>🤝</Text>
+            <Text style={styles.emptyTitle}>Aucun match</Text>
+            <Text style={styles.emptySubtitle}>
+              Continuez à swiper pour trouver des talents
+            </Text>
           </View>
         }
       />
@@ -104,118 +97,118 @@ export default function MatchesScreen() {
   );
 }
 
-const matchStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F7FA",
   },
+
   header: {
     backgroundColor: "#007AFF",
-    padding: 24,
     paddingTop: 60,
     paddingBottom: 28,
+    paddingHorizontal: 24,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    shadowColor: "#007AFF",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
   },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 6,
-  },
+
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "#FFF",
   },
-  email: {
+
+  subtitle: {
     fontSize: 15,
     color: "#E3F2FF",
-    opacity: 0.9,
+    marginTop: 6,
   },
+
   listContent: {
     padding: 16,
   },
+
   matchItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    backgroundColor: "#FFF",
+    padding: 14,
+    borderRadius: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
   },
+
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: "#007AFF",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
   },
+
   avatarText: {
-    color: "#fff",
-    fontSize: 20,
+    color: "#FFF",
+    fontSize: 22,
     fontWeight: "bold",
   },
+
   matchInfo: {
     flex: 1,
   },
+
   matchName: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "bold",
-    color: "#333",
+    color: "#1A1A1A",
   },
+
   matchSubtitle: {
     fontSize: 14,
+    color: "#007AFF",
+    marginTop: 2,
+  },
+
+  matchLocation: {
+    fontSize: 13,
     color: "#666",
-    marginBottom: 4,
+    marginTop: 2,
   },
-  matchMessage: {
-    fontSize: 14,
-    color: "#999",
-  },
-  unreadMessage: {
-    fontWeight: "bold",
-    color: "#333",
-  },
+
   matchRight: {
     alignItems: "flex-end",
+    gap: 6,
   },
+
   matchTime: {
     fontSize: 12,
     color: "#999",
-    marginBottom: 4,
   },
-  unreadBadge: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#FF3B30",
-  },
+
   emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     marginTop: 100,
+    alignItems: "center",
   },
+
   emptyEmoji: {
     fontSize: 64,
-
     marginBottom: 16,
   },
-  emptyText: {
-    fontSize: 24,
+
+  emptyTitle: {
+    fontSize: 22,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 8,
   },
-  emptySubtext: {
-    fontSize: 16,
+
+  emptySubtitle: {
+    fontSize: 15,
     color: "#666",
+    marginTop: 6,
+    textAlign: "center",
   },
 });
