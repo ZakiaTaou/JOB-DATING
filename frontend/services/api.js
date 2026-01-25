@@ -99,7 +99,7 @@ export const swipeJob = async (jobId, action)=>{
 
 export const getCandidateMatches = async ()=>{
   const res = await api.get("/matches/candidate");
-  return res.data.data;
+  return res.data;
 }
 
 export const getRecruiterMatches = async ()=>{
