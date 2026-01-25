@@ -107,7 +107,7 @@ export default function RecruiterProfile() {
             <Ionicons name="log-out-outline" size={28} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.email}>{user?.companyName}</Text>
+        <Text style={styles.email}>{formData.companyName}</Text>
       </View>
       <ScrollView>
         {/* Informations entreprise */}

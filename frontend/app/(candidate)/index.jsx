@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useJobsToSwipe, useSwipeJob } from "../../hooks/useCandidateSwipe";
+import { Briefcase, Search } from "lucide-react-native";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
@@ -19,7 +20,7 @@ export default function CandidateSwipe() {
   const { user } = useAuthStore();
   const { data: jobs = [], isLoading } = useJobsToSwipe();
   const { mutate: swipeJob } = useSwipeJob();
-
+  console.log("USER FROM STORE", user);
 
   if (isLoading) {
     return (
@@ -35,11 +36,11 @@ export default function CandidateSwipe() {
         <View style={styles.header}>
           <Text style={styles.title}>Offres d'emploi</Text>
           <Text style={styles.headerSubtitle}>
-            {user?.firstName || "Candidat"}
+            {user?.candidateProfile?.firstName || "Candidat"}
           </Text>
         </View>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyEmoji}>🎉</Text>
+          <Text style={styles.emptyEmoji}><Search size={50} color={"#007AFF"} /></Text>
           <Text style={styles.emptyTitle}>Plus d'offres disponibles</Text>
           <Text style={styles.emptySubtitle}>Revenez plus tard!</Text>
         </View>
@@ -54,7 +55,7 @@ export default function CandidateSwipe() {
       <View style={styles.header}>
         <Text style={styles.title}>Offres d'emploi</Text>
         <Text style={styles.headerSubtitle}>
-          {user?.firstName || "Candidat"}
+          {user?.candidateProfile?.firstName || "Candidat"}
         </Text>
       </View>
 
@@ -66,11 +67,11 @@ export default function CandidateSwipe() {
           >
             <View style={styles.cardHeader}>
               <View style={styles.companyLogo}>
-                <Ionicons name="briefcase" size={30} color="#FFFFFF" />
+                <Briefcase size={30} color="#FFFFFF" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.jobTitle}>{currentJob.title}</Text>
-                <Text style={styles.companyName}>{currentJob.company}</Text>
+                <Text style={styles.companyName}>{currentJob.recruiter.companyName}</Text>
               </View>
             </View>
 

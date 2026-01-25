@@ -17,6 +17,7 @@ export const getCandidateMatches = async (req, res) => {
       include: [
         {
           model: JobOffer,
+          as: "jobOffer",
           include: [
             {
               model: Recruiter,

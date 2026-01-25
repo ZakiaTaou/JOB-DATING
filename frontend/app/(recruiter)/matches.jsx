@@ -1,26 +1,3 @@
-// import { View, Text, FlatList, TouchableOpacity } from "react-native";
-// import { useRecruiterMatches } from "../../hooks/useMatches";
-
-// export default function CandidateMatchesScreen() {
-//   const { data: matches, isLoading } = useRecruiterMatches();
-
-//   if (isLoading) return <Text>Loading...</Text>;
-//   console.log( matches);
-
-//   return (
-//     <View style={{ flex: 1, padding: 16 }}>
-//       {matches.map((match) => (
-//         <View key={match.id}>
-//           <Text>
-//             {match?.candidate?.firstName} {match?.candidate?.lastName}
-//           </Text>
-//           <Text>{match?.jobOffer?.title}</Text>
-//         </View>
-//       ))}
-//     </View>
-//   );
-// }
-
 import React from "react";
 import {
   View,
@@ -33,7 +10,7 @@ import { useRouter } from "expo-router";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useRecruiterMatches } from "../../hooks/useMatches";
-import { MapPin, MessageCircleHeart } from "lucide-react-native";
+import { HeartCrack, MapPin, MessageCircleHeart } from "lucide-react-native";
 
 export default function RecruiterMatchesScreen() {
   const router = useRouter();
@@ -46,8 +23,8 @@ export default function RecruiterMatchesScreen() {
     >
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>
-          {item.candidate?.firstName.charAt(0)}
-          {item.candidate?.lastName.charAt(0)}
+          {item.candidate?.firstName.charAt(0).toUpperCase()}
+          {item.candidate?.lastName.charAt(0).toUpperCase()}
         </Text>
       </View>
 
@@ -69,7 +46,6 @@ export default function RecruiterMatchesScreen() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.title}>Mes Matchs</Text>
         <Text style={styles.subtitle}>
@@ -85,7 +61,7 @@ export default function RecruiterMatchesScreen() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyEmoji}>🤝</Text>
+            <Text style={styles.emptyEmoji}><HeartCrack size={50} color={"#007AFF"}/></Text>
             <Text style={styles.emptyTitle}>Aucun match</Text>
             <Text style={styles.emptySubtitle}>
               Continuez à swiper pour trouver des talents
