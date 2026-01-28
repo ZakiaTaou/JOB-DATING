@@ -221,7 +221,7 @@ export const getCandidatesToSwipe = async (req, res) => {
 
 export const swipeCandidate = async (req, res) => {
   try {
-    const userId = req.user.id; // recruiter user
+    const userId = req.user.id; 
     const { candidateId } = req.params;
     const { action } = req.body;
 

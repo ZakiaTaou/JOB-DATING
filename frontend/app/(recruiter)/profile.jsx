@@ -14,13 +14,13 @@ import { useRouter } from "expo-router";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useProfile } from "../../hooks/useProfile";
 import { Ionicons } from "@expo/vector-icons";
+import { LogOut } from "lucide-react-native";
 
 export default function RecruiterProfile() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const { profile, isLoading, saveProfile, isSaving } = useProfile("recruiter");
 
-  // Handle logout
   const handleLogout = async () => {
     Alert.alert("Déconnexion", "Voulez-vous vraiment vous déconnecter ?", [
       {
@@ -48,7 +48,6 @@ export default function RecruiterProfile() {
     phone: "",
   });
 
-  // Charger les données du profil quand disponible
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -98,19 +97,17 @@ export default function RecruiterProfile() {
   }
 
   return (
-    <View style={styles.container} >
-
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <Text style={styles.title}>Profil Entreprise</Text>
           <TouchableOpacity onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={28} color="#FFFFFF" />
+            <LogOut size={28} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
         <Text style={styles.email}>{formData.companyName}</Text>
       </View>
       <ScrollView>
-        {/* Informations entreprise */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Informations de l'entreprise</Text>
 
@@ -151,7 +148,6 @@ export default function RecruiterProfile() {
           </Text>
         </View>
 
-        {/* Détails */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Détails</Text>
 
@@ -169,7 +165,7 @@ export default function RecruiterProfile() {
                 style={[
                   styles.radioButton,
                   formData.companySize === option.value &&
-                  styles.radioButtonActive,
+                    styles.radioButtonActive,
                 ]}
                 onPress={() =>
                   setFormData({ ...formData, companySize: option.value })
@@ -179,7 +175,7 @@ export default function RecruiterProfile() {
                   style={[
                     styles.radioText,
                     formData.companySize === option.value &&
-                    styles.radioTextActive,
+                      styles.radioTextActive,
                   ]}
                 >
                   {option.label}
@@ -227,10 +223,7 @@ export default function RecruiterProfile() {
             {isSaving ? "Sauvegarde..." : "Sauvegarder"}
           </Text>
         </TouchableOpacity>
-
-
       </ScrollView>
-
     </View>
   );
 }

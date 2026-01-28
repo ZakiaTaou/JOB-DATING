@@ -1,6 +1,5 @@
 import { body, validationResult } from "express-validator";
 
-// Middleware de validation pour l'inscription
 export const validate = (req, res, next) => {
   const erreur = validationResult(req);
   if (!erreur.isEmpty()) {
@@ -15,7 +14,6 @@ export const validate = (req, res, next) => {
   next();
 };
 
-// Validation registration
 export const registerValidation = [
   body("email").isEmail().withMessage("Email invalide").normalizeEmail(),
   body("password")
@@ -28,13 +26,11 @@ export const registerValidation = [
     .withMessage('Le rôle doit être "candidate" ou "recruiter"'),
 ];
 
-// Validation connexion
 export const loginValidation = [
   body("email").isEmail().withMessage("Email invalide").normalizeEmail(),
   body("password").notEmpty().withMessage("Le mot de passe est requis"),
 ];
 
-// Validation profil candidat
 export const candidateProfileValidation = [
   body("firstName").notEmpty().withMessage("Le prénom est requis").trim(),
   body("lastName").notEmpty().withMessage("Le nom est requis").trim(),

@@ -9,48 +9,8 @@ import {
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useMyJobs, useDeleteJob } from "../../../hooks/useRecruiterJobs";
-import { CircleDollarSign, MapPin,FileText } from "lucide-react-native";
-const MOCK_MY_JOBS = [
-  {
-    id: 1,
-    title: "Développeur Full Stack JS",
-    location: "Casablanca",
-    contractType: "CDI",
-    workMode: "Hybrid",
-    salary: { min: 15000, max: 25000 },
-    skills: ["JavaScript", "React", "Node.js"],
-    applicants: 12,
-    matches: 3,
-    status: "active",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: 2,
-    title: "Développeur Frontend React",
-    location: "Rabat",
-    contractType: "CDI",
-    workMode: "Remote",
-    salary: { min: 12000, max: 20000 },
-    skills: ["React", "TypeScript", "CSS"],
-    applicants: 8,
-    matches: 2,
-    status: "active",
-    createdAt: "2024-01-10",
-  },
-  {
-    id: 3,
-    title: "Backend Developer Node.js",
-    location: "Marrakech",
-    contractType: "CDD",
-    workMode: "Présentiel",
-    salary: { min: 18000, max: 30000 },
-    skills: ["Node.js", "PostgreSQL", "Docker"],
-    applicants: 5,
-    matches: 1,
-    status: "closed",
-    createdAt: "2024-01-05",
-  },
-];
+import { CircleDollarSign, MapPin,FileText, Briefcase } from "lucide-react-native";
+
 export default function JobsList() {
   const { data, isLoading } = useMyJobs();
   const deleteJobMutation = useDeleteJob();
@@ -77,7 +37,6 @@ export default function JobsList() {
 
   const renderJob = ({ item }) => (
     <View style={jobListStyles.jobCard}>
-      {/* Header */}
       <View style={jobListStyles.jobHeader}>
         <View style={jobListStyles.jobHeaderLeft}>
           <Text style={jobListStyles.jobTitle}>{item.title}</Text>
@@ -90,7 +49,6 @@ export default function JobsList() {
         </View>
       </View>
 
-      {/* Info */}
       <View style={jobListStyles.jobInfo}>
         <View
           style={{ flexDirection: "row", alignItems: "flex-start", gap: 4 }}
@@ -106,7 +64,6 @@ export default function JobsList() {
         </View>
       </View>
 
-      {/* Skills */}
       <View style={jobListStyles.skillsRow}>
         {item.requiredSkills.slice(0, 3).map((skill, index) => (
           <View key={index} style={jobListStyles.skillBadge}>
@@ -119,7 +76,6 @@ export default function JobsList() {
           </Text>
         )}
       </View>
-      {/* Actions */}
       <View style={jobListStyles.actionsRow}>
         <TouchableOpacity
           style={[jobListStyles.actionButton, jobListStyles.editButton]}
@@ -140,7 +96,6 @@ export default function JobsList() {
 
   return (
     <View style={jobListStyles.container}>
-      {/* Header */}
       <View style={jobListStyles.header}>
         <View style={jobListStyles.headerRow}>
           <Text style={jobListStyles.title}>Mes Offres</Text>
@@ -154,7 +109,6 @@ export default function JobsList() {
         <Text style={jobListStyles.headerSubtitle}>{jobs.length} total</Text>
       </View>
 
-      {/* Liste */}
       <FlatList
         data={jobs}
         renderItem={renderJob}
@@ -162,7 +116,7 @@ export default function JobsList() {
         contentContainerStyle={jobListStyles.listContent}
         ListEmptyComponent={
           <View style={jobListStyles.emptyContainer}>
-            <Text style={jobListStyles.emptyEmoji}>📋</Text>
+            <Text style={jobListStyles.emptyEmoji}><Briefcase color="#007AFF"/></Text>
             <Text style={jobListStyles.emptyText}>Aucune offre créée</Text>
             <Text style={jobListStyles.emptySubtext}>
               Créez votre première offre!
@@ -358,7 +312,7 @@ const jobListStyles = StyleSheet.create({
     marginBottom: 24,
   },
   emptyButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#007AFF",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,

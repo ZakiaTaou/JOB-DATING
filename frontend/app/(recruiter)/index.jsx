@@ -22,8 +22,7 @@ export default function RecruiterSwipe() {
   const { user } = useAuthStore();
   const { data: candidates = [], isLoading } = useCandidatesToSwipe();
   const { mutate: swipeCandidate } = useSwipeCandidate();
-  // const [index, setIndex] = useState(0);
-  // const currentCandidate = candidates[index];
+
   if (isLoading) {
     return (
       <View style={styles.container}>

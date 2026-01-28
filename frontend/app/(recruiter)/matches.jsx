@@ -19,7 +19,7 @@ export default function RecruiterMatchesScreen() {
   const renderMatch = ({ item }) => (
     <TouchableOpacity
       style={styles.matchItem}
-      onPress={() => router.push(`/chat/${item.id}`)}
+      onPress={() => router.push(`(recruiter)/chat/${item.id}`)}
     >
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>

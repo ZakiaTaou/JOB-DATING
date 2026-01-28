@@ -5,6 +5,8 @@ import candidateRoutes from "./routes/candidateRoutes.js";
 import recruiterRoutes from "./routes/recruiterRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js"
 import matchRoutes from "./routes/matchRoutes.js"
+import chatRoutes from "./routes/chatRoutes.js"
+
 // Config env
 dotenv.config();
 
@@ -18,5 +20,6 @@ app.use('/api/candidates', candidateRoutes);
 app.use('/api/recruiters', recruiterRoutes);  
 app.use('/api/jobs', jobRoutes);
 app.use('/api/matches', matchRoutes);
+app.use('/api/messages', chatRoutes);
 
 export default app;

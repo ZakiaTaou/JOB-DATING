@@ -31,7 +31,6 @@ export default function Register() {
   const [errors, setErrors] = useState({});
 
   const handleRegister = () => {
-    // ✅ Zod validation
     const result = registerSchema.safeParse({ email, password, role });
 
     if (!result.success) {
@@ -49,20 +48,9 @@ export default function Register() {
       { email, password, role },
       {
         onSuccess: async (response) => {
-          /**
-           * Backend response example:
-           * {
-           *   success: true,
-           *   data: {
-           *     user: {...},
-           *     token: "jwt"
-           *   }
-           * }
-           */
           const { user, token } = response.data;
 
           await setAuth(user, token);
-          // ❌ No navigation here
         },
         onError: () => {
           Alert.alert(
@@ -96,7 +84,6 @@ export default function Register() {
             </Text>
 
             <View style={styles.form}>
-              {/* Email */}
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -113,7 +100,6 @@ export default function Register() {
                 )}
               </View>
 
-              {/* Password */}
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Mot de passe</Text>
                 <View
@@ -134,7 +120,7 @@ export default function Register() {
                     onPress={() => setShowPassword(!showPassword)}
                   >
                     <Ionicons
-                      name={showPassword ? "eye-off" : "eye"}
+                      name={showPassword ? "eye" : "eye-off"}
                       size={22}
                       color="#666"
                     />
@@ -145,7 +131,6 @@ export default function Register() {
                 )}
               </View>
 
-              {/* Role */}
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Vous êtes ?</Text>
                 <View style={styles.roleContainer}>
@@ -188,7 +173,6 @@ export default function Register() {
                 )}
               </View>
 
-              {/* Button */}
               <TouchableOpacity
                 style={styles.button}
                 onPress={handleRegister}
@@ -201,7 +185,6 @@ export default function Register() {
                 )}
               </TouchableOpacity>
 
-              {/* Footer */}
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Déjà un compte ? </Text>
                 <Link href="/login">

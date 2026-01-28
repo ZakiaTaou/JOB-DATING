@@ -5,7 +5,6 @@ export const createJob = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Vérifier que l'utilisateur est un recruteur
     if (req.user.role !== "recruiter") {
       return res.status(403).json({
         success: false,
@@ -13,7 +12,6 @@ export const createJob = async (req, res) => {
       });
     }
 
-    // Récupérer le profil recruteur
     const recruiter = await Recruiter.findOne({ where: { userId } });
     if (!recruiter) {
       return res.status(404).json({
@@ -33,7 +31,6 @@ export const createJob = async (req, res) => {
       isActive,
     } = req.body;
 
-    // Validation
     if (!title || !description) {
       return res.status(400).json({
         success: false,
@@ -41,7 +38,6 @@ export const createJob = async (req, res) => {
       });
     }
 
-    // Créer l'offre
     const job = await JobOffer.create({
       recruiterId: recruiter.id,
       title,
@@ -53,7 +49,6 @@ export const createJob = async (req, res) => {
       isActive: isActive !== undefined ? isActive : true,
     });
 
-    // Récupérer l'offre avec les infos du recruteur
     const jobWithRecruiter = await JobOffer.findByPk(job.id, {
       include: [
         {
@@ -159,7 +154,6 @@ export const updateJob = async (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    // Vérifier que l'utilisateur est un recruteur
     if (req.user.role !== "recruiter") {
       return res.status(403).json({
         success: false,
@@ -167,7 +161,6 @@ export const updateJob = async (req, res) => {
       });
     }
 
-    // Récupérer le profil recruteur
     const recruiter = await Recruiter.findOne({ where: { userId } });
     if (!recruiter) {
       return res.status(404).json({
@@ -176,7 +169,6 @@ export const updateJob = async (req, res) => {
       });
     }
 
-    // Trouver l'offre
     const job = await JobOffer.findByPk(id);
     if (!job) {
       return res.status(404).json({
@@ -185,7 +177,6 @@ export const updateJob = async (req, res) => {
       });
     }
 
-    // Vérifier que le recruteur est le propriétaire de l'offre
     if (job.recruiterId !== recruiter.id) {
       return res.status(403).json({
         success: false,
@@ -203,7 +194,6 @@ export const updateJob = async (req, res) => {
       isActive,
     } = req.body;
 
-    // Mettre à jour
     await job.update({
       title: title || job.title,
       description: description || job.description,
@@ -214,7 +204,6 @@ export const updateJob = async (req, res) => {
       isActive: isActive !== undefined ? isActive : job.isActive,
     });
 
-    // Récupérer l'offre mise à jour avec les relations
     const updatedJob = await JobOffer.findByPk(id, {
       include: [
         {
@@ -245,7 +234,6 @@ export const deleteJob = async (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    // Vérifier que l'utilisateur est un recruteur
     if (req.user.role !== "recruiter") {
       return res.status(403).json({
         success: false,
@@ -253,7 +241,6 @@ export const deleteJob = async (req, res) => {
       });
     }
 
-    // Récupérer le profil recruteur
     const recruiter = await Recruiter.findOne({ where: { userId } });
     if (!recruiter) {
       return res.status(404).json({
@@ -262,7 +249,6 @@ export const deleteJob = async (req, res) => {
       });
     }
 
-    // Trouver l'offre
     const job = await JobOffer.findByPk(id);
     if (!job) {
       return res.status(404).json({
@@ -271,7 +257,6 @@ export const deleteJob = async (req, res) => {
       });
     }
 
-    // Vérifier que le recruteur est le propriétaire
     if (job.recruiterId !== recruiter.id) {
       return res.status(403).json({
         success: false,
@@ -279,7 +264,6 @@ export const deleteJob = async (req, res) => {
       });
     }
 
-    // Supprimer l'offre
     await job.destroy();
 
     res.status(200).json({
@@ -300,7 +284,6 @@ export const getJobsByRecruiter = async (req, res) => {
   try {
     const { recruiterId } = req.params;
 
-    // Vérifier que le recruteur existe
     const recruiter = await Recruiter.findByPk(recruiterId);
     if (!recruiter) {
       return res.status(404).json({
@@ -340,7 +323,6 @@ export const getMyJobs = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Vérifier que l'utilisateur est un recruteur
     if (req.user.role !== "recruiter") {
       return res.status(403).json({
         success: false,
@@ -348,7 +330,6 @@ export const getMyJobs = async (req, res) => {
       });
     }
 
-    // Récupérer le profil recruteur
     const recruiter = await Recruiter.findOne({ where: { userId } });
     if (!recruiter) {
       return res.status(404).json({

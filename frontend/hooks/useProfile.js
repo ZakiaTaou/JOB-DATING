@@ -5,7 +5,6 @@ import { Alert } from "react-native";
 export const useProfile = (role) => {
   const queryClient = useQueryClient();
 
-  // Déterminer quelle fonction utiliser selon le rôle
   const getProfileFn =
     role === "candidate"
       ? profileService.getMyCandidateProfile
@@ -21,7 +20,6 @@ export const useProfile = (role) => {
       ? profileService.updateCandidateProfile
       : profileService.updateRecruiterProfile;
 
-  // Query pour récupérer le profil
   const {
     data: profile,
     isLoading,
@@ -32,17 +30,14 @@ export const useProfile = (role) => {
     queryFn: getProfileFn,
     retry: false,
     onError: (error) => {
-      // Si 404, c'est normal (profil pas encore créé)
       if (error.response?.status !== 404) {
         console.error("Erreur chargement profil:", error);
       }
     },
   });
 
-  // Mutation pour créer ou modifier
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      // Si le profil existe, on update, sinon on crée
       if (profile) {
         return await updateProfileFn(data);
       } else {
@@ -50,7 +45,6 @@ export const useProfile = (role) => {
       }
     },
     onSuccess: (data) => {
-      // Invalider le cache pour recharger le profil
       queryClient.invalidateQueries([`${role}Profile`]);
       Alert.alert("Succès", "Profil sauvegardé avec succès");
     },
@@ -66,12 +60,10 @@ export const useProfile = (role) => {
   });
 
   return {
-    // Data
     profile,
     isLoading,
     error,
 
-    // Actions
     saveProfile: saveMutation.mutate,
     isSaving: saveMutation.isPending,
     refetch,

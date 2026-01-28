@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/index.js";
 
-// Middleware pour protéger les routes
 export const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
@@ -41,7 +40,6 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// Middleware pour vérifier le rôle de l'utilisateur
 export const authorize = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

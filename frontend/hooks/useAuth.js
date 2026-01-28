@@ -12,7 +12,6 @@ export const useLoginMutation = () => {
       return response;
     },
     onSuccess: async (response) => {
-      // Backend returns { success: true, data: { user, token } }
       if (response && response.data) {
         const { user, token } = response.data;
         await AsyncStorage.setItem("token", token);
