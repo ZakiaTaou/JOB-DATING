@@ -8,7 +8,6 @@ export const useAuthStore = create((set) => ({
   isAuthenticated: false,
   isInitialized: false,
 
-  // ✅ Login / Register success
   setAuth: async (user, token) => {
     await AsyncStorage.setItem("token", token);
     set({
@@ -19,7 +18,6 @@ export const useAuthStore = create((set) => ({
     });
   },
 
-  // ✅ Logout
   logout: async () => {
     await AsyncStorage.removeItem("token");
     set({
@@ -30,7 +28,6 @@ export const useAuthStore = create((set) => ({
     });
   },
 
-  // ✅ Called once when app starts
   loadUser: async () => {
     try {
       const token = await AsyncStorage.getItem("token");

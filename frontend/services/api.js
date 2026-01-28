@@ -4,14 +4,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const API_url = "http://192.168.11.108:5000/api";
 
 export const api = axios.create({
-  baseURL: API_url,
-  timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: API_url
 });
 
-// Interceptor pour ajouter le token
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem("token");
   if (token) {

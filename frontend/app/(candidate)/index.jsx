@@ -20,7 +20,7 @@ export default function CandidateSwipe() {
   const { user } = useAuthStore();
   const { data: jobs = [], isLoading } = useJobsToSwipe();
   const { mutate: swipeJob } = useSwipeJob();
-  console.log("USER FROM STORE", user);
+  // console.log("USER FROM STORE", user);
 
   if (isLoading) {
     return (

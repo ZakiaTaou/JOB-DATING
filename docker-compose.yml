@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: jobdating-postgres
+    environment:
+      POSTGRES_DB: jobdating
+      POSTGRES_USER: jobdating
+      POSTGRES_PASSWORD: jobdating
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: jobdating-backend
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: jobdating
+      DB_USER: jobdating
+      DB_PASSWORD: jobdating
+      JWT_SECRET: supersecret
+      JWT_EXPIRE: 7d
+    depends_on:
+      - db
+    command: npm run dev
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  db_data:

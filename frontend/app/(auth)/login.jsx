@@ -30,7 +30,6 @@ export default function Login() {
   const [errors, setErrors] = useState({});
 
   const handleLogin = () => {
-    // ✅ Zod validation
     const result = loginSchema.safeParse({ email, password });
 
     if (!result.success) {
@@ -48,20 +47,9 @@ export default function Login() {
       { email, password },
       {
         onSuccess: async (response) => {
-          /**
-           * Backend response example:
-           * {
-           *   success: true,
-           *   data: {
-           *     user: {...},
-           *     token: "jwt"
-           *   }
-           * }
-           */
           const { user, token } = response.data;
 
           await setAuth(user, token);
-          // Force navigation if layout doesn't catch it
           if (user?.role === "candidate") {
             router.replace("/(candidate)");
           } else if (user?.role === "recruiter") {
@@ -94,7 +82,6 @@ export default function Login() {
           <Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
 
           <View style={styles.form}>
-            {/* Email */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Email</Text>
               <TextInput
@@ -111,7 +98,6 @@ export default function Login() {
               )}
             </View>
 
-            {/* Password */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Mot de passe</Text>
               <View
@@ -132,7 +118,7 @@ export default function Login() {
                   onPress={() => setShowPassword(!showPassword)}
                 >
                   <Ionicons
-                    name={showPassword ? "eye-off" : "eye"}
+                    name={showPassword ? "eye" : "eye-off"}
                     size={22}
                     color="#666"
                   />
@@ -143,7 +129,6 @@ export default function Login() {
               )}
             </View>
 
-            {/* Button */}
             <TouchableOpacity
               style={styles.button}
               onPress={handleLogin}
@@ -156,7 +141,6 @@ export default function Login() {
               )}
             </TouchableOpacity>
 
-            {/* Footer */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Pas encore de compte ? </Text>
               <Link href="/register">

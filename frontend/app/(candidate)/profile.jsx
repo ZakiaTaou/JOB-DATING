@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useProfile } from "../../hooks/useProfile";
 import { Ionicons } from "@expo/vector-icons";
+import { LogOut } from "lucide-react-native";
 
 export default function CandidateProfile() {
   const router = useRouter();
@@ -130,7 +131,7 @@ export default function CandidateProfile() {
         <View style={styles.headerRow}>
           <Text style={styles.title}>Mon Profil</Text>
           <TouchableOpacity onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={28} color="#FFFFFF" />
+            <LogOut size={28} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
         <Text style={styles.email}>{profile?.firstName} {profile?.lastName}</Text>

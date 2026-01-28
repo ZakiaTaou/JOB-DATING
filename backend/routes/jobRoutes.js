@@ -16,11 +16,10 @@ import {
 
 const router = express.Router();
 
-// Routes publiques/protégées générales
 router.get("/", protect, getAllJobs);
 router.get("/:id", protect, getJobById);
 
-// Routes recruteur
+
 router.post(
   "/",
   protect,

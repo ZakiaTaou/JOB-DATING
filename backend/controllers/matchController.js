@@ -64,7 +64,7 @@ export const getRecruiterMatches = async (req, res) => {
       ],
     });
 
-    console.log("MATCHES 👉", matches);
+    // console.log("MATCHES 👉", matches);
 
     res.json({ success: true, data: matches });
   } catch (error) {
